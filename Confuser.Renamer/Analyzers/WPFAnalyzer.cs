@@ -33,7 +33,7 @@ namespace Confuser.Renamer.Analyzers {
 
 			var module = def as ModuleDefMD;
 			if (module != null) {
-				AnalyzeResources(context, service, module);
+				AnalyzeResources(context, service, parameters, module);
 			}
 		}
 
@@ -300,9 +300,9 @@ namespace Confuser.Renamer.Analyzers {
 			}
 		}
 
-		void AnalyzeResources(ConfuserContext context, INameService service, ModuleDefMD module) {
+		void AnalyzeResources(ConfuserContext context, INameService service, ProtectionParameters parameters, ModuleDefMD module) {
 			if (analyzer == null) {
-				analyzer = new BAMLAnalyzer(context, service);
+				analyzer = new BAMLAnalyzer(context, service, parameters);
 				analyzer.AnalyzeElement += AnalyzeBAMLElement;
 			}
 

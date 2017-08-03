@@ -13,6 +13,7 @@ namespace Confuser.Renamer.BAML {
 	internal class BAMLAnalyzer {
 		readonly ConfuserContext context;
 		readonly INameService service;
+	  readonly ProtectionParameters parameters;
 
 		readonly Dictionary<string, List<MethodDef>> methods = new Dictionary<string, List<MethodDef>>();
 		readonly Dictionary<string, List<EventDef>> events = new Dictionary<string, List<EventDef>>();
@@ -46,9 +47,10 @@ namespace Confuser.Renamer.BAML {
 		public string CurrentBAMLName { get; set; }
 		public ModuleDefMD Module { get; set; }
 
-		public BAMLAnalyzer(ConfuserContext context, INameService service) {
+		public BAMLAnalyzer(ConfuserContext context, INameService service, ProtectionParameters parameters) {
 			this.context = context;
 			this.service = service;
+		  this.parameters = parameters;
 			PreInit();
 		}
 
@@ -575,7 +577,10 @@ namespace Confuser.Renamer.BAML {
 					List<PropertyDef> candidates;
 					if (properties.TryGetValue(part.Name, out candidates))
 						foreach (PropertyDef property in candidates) {
-							service.SetCanRename(property, false, "It is potentially used for XAML bindings");
+						  if (!parameters.GetParameter(context, property, "forceRen", false))
+						  {
+						    service.SetCanRename(property, false, "It is potentially used for XAML bindings");
+						  }
 						}
 				}
 
