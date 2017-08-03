@@ -27,10 +27,10 @@ namespace Confuser.Renamer.Analyzers {
 						bool baseUnderCtrl = context.Modules.Contains(slot.MethodDef.DeclaringType.Module as ModuleDefMD);
 						bool ifaceUnderCtrl = context.Modules.Contains(slot.Overrides.MethodDef.DeclaringType.Module as ModuleDefMD);
 						if ((!baseUnderCtrl && ifaceUnderCtrl) || !service.CanRename(slot.MethodDef)) {
-							service.SetCanRename(slot.Overrides.MethodDef, false);
+							service.SetCanRename(slot.Overrides.MethodDef, false, "Base class method");
 						}
 						else if (baseUnderCtrl && !ifaceUnderCtrl || !service.CanRename(slot.Overrides.MethodDef)) {
-							service.SetCanRename(slot.MethodDef, false);
+							service.SetCanRename(slot.MethodDef, false, "Interface method");
 						}
 					}
 				}
@@ -57,8 +57,8 @@ namespace Confuser.Renamer.Analyzers {
 					foreach (var slot in slots) {
 						if (slot.Overrides == null)
 							continue;
-						service.SetCanRename(method, false);
-						service.SetCanRename(slot.Overrides.MethodDef, false);
+						service.SetCanRename(method, false, "Abstract method");
+						service.SetCanRename(slot.Overrides.MethodDef, false, "Abstract method override");
 					}
 				}
 			}

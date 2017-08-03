@@ -167,7 +167,7 @@ namespace Confuser.Renamer.Analyzers {
 					if (methodRef.DeclaringType.FullName == "System.Windows.Data.PropertyGroupDescription" &&
 					    methodRef.Name == ".ctor" && i - 1 >= 0 && method.Body.Instructions[i - 1].OpCode.Code == Code.Ldstr) {
 						foreach (var property in analyzer.LookupProperty((string)method.Body.Instructions[i - 1].Operand))
-							service.SetCanRename(property, false);
+							service.SetCanRename(property, false, "PropertyGroupDescription .ctor");
 					}
 				}
 				else if (instr.OpCode == OpCodes.Ldstr) {
@@ -219,11 +219,11 @@ namespace Confuser.Renamer.Analyzers {
 				{
 					MethodDef accessor;
 					if ((accessor = declType.FindMethod("Get" + name)) != null && accessor.IsStatic) {
-						service.SetCanRename(accessor, false);
+						service.SetCanRename(accessor, false, "It is a AttachedProperty getter");
 						found = true;
 					}
 					if ((accessor = declType.FindMethod("Set" + name)) != null && accessor.IsStatic) {
-						service.SetCanRename(accessor, false);
+						service.SetCanRename(accessor, false, "It is an AttachedProperty setter.");
 						found = true;
 					}
 				}
@@ -232,18 +232,18 @@ namespace Confuser.Renamer.Analyzers {
 				// Find CLR property for attached DP as well, because it seems attached DP can be use as normal DP as well.
 				PropertyDef property = null;
 				if ((property = declType.FindProperty(name)) != null) {
-					service.SetCanRename(property, false);
+					service.SetCanRename(property, false, "It is a CLR property for a DependencyProperty");
 
 					found = true;
 					if (property.GetMethod != null)
-						service.SetCanRename(property.GetMethod, false);
+						service.SetCanRename(property.GetMethod, false, "It is a getter for a DepenedencyProperty");
 
 					if (property.SetMethod != null)
-						service.SetCanRename(property.SetMethod, false);
+						service.SetCanRename(property.SetMethod, false, "It is a setteer for a DepenedencyProperty");
 
 					if (property.HasOtherMethods) {
 						foreach (MethodDef accessor in property.OtherMethods)
-							service.SetCanRename(accessor, false);
+							service.SetCanRename(accessor, false, "Property has other methods than get/set");
 					}
 				}
 				if (!found) {
@@ -282,20 +282,20 @@ namespace Confuser.Renamer.Analyzers {
 					                          name, declType.FullName);
 					continue;
 				}
-				service.SetCanRename(eventDef, false);
+				service.SetCanRename(eventDef, false, "It is a routed event");
 
 				if (eventDef.AddMethod != null)
-					service.SetCanRename(eventDef.AddMethod, false);
+					service.SetCanRename(eventDef.AddMethod, false, "It is an Add method of an event.");
 
 				if (eventDef.RemoveMethod != null)
-					service.SetCanRename(eventDef.RemoveMethod, false);
+					service.SetCanRename(eventDef.RemoveMethod, false, "It is a Remove method of an event.");
 
 				if (eventDef.InvokeMethod != null)
-					service.SetCanRename(eventDef.InvokeMethod, false);
+					service.SetCanRename(eventDef.InvokeMethod, false, "It is an Invoke method of an event.");
 
 				if (eventDef.HasOtherMethods) {
 					foreach (MethodDef accessor in eventDef.OtherMethods)
-						service.SetCanRename(accessor, false);
+						service.SetCanRename(accessor, false, "It is a method of an event.");
 				}
 			}
 		}

@@ -123,7 +123,7 @@ namespace Confuser.Renamer {
 				if (idOffset != 0)
 					service.SetNameId(idOffset);
 
-				service.SetCanRename(def, false);
+				service.SetCanRename(def, false, "Module definition");
 			}
 
 			if (!runAnalyzer || parameters.GetParameter(context, def, "forceRen", false))
@@ -147,14 +147,14 @@ namespace Confuser.Renamer {
 
 		void Analyze(NameService service, ConfuserContext context, ProtectionParameters parameters, TypeDef type) {
 			if (IsVisibleOutside(context, parameters, type)) {
-				service.SetCanRename(type, false);
+				service.SetCanRename(type, false, "It is visible outside");
 			}
 			else if (type.IsRuntimeSpecialName || type.IsGlobalModuleType) {
-				service.SetCanRename(type, false);
+				service.SetCanRename(type, false, "RuntimeSpecialType or GlobalModuleType");
 			}
 			else if (type.FullName == "ConfusedByAttribute") {
 				// Courtesy
-				service.SetCanRename(type, false);
+				service.SetCanRename(type, false, "Attribute injected by ConfuserEx");
 			}
 
 			if (parameters.GetParameter(context, type, "forceRen", false))
@@ -165,7 +165,7 @@ namespace Confuser.Renamer {
 			}
 
 			if (type.InheritsFrom("System.Configuration.SettingsBase")) {
-				service.SetCanRename(type, false);
+				service.SetCanRename(type, false, "Inherits from SettingsBase");
 			}
 		}
 
@@ -173,68 +173,68 @@ namespace Confuser.Renamer {
 			if (IsVisibleOutside(context, parameters, method.DeclaringType) &&
 			    (method.IsFamily || method.IsFamilyOrAssembly || method.IsPublic) &&
 			    IsVisibleOutside(context, parameters, method))
-				service.SetCanRename(method, false);
+				service.SetCanRename(method, false, "It is visible outside.");
 
 			else if (method.IsRuntimeSpecialName)
-				service.SetCanRename(method, false);
+				service.SetCanRename(method, false, "RuntimeSpecialType");
 
 			else if (parameters.GetParameter(context, method, "forceRen", false))
 				return;
 
 			else if (method.DeclaringType.IsComImport() && !method.HasAttribute("System.Runtime.InteropServices.DispIdAttribute"))
-				service.SetCanRename(method, false);
+				service.SetCanRename(method, false, "COM import/export");
 
 			else if (method.DeclaringType.IsDelegate())
-				service.SetCanRename(method, false);
+				service.SetCanRename(method, false, "Declaring type is a delegate");
 		}
 
 		void Analyze(NameService service, ConfuserContext context, ProtectionParameters parameters, FieldDef field) {
 			if (IsVisibleOutside(context, parameters, field.DeclaringType) &&
 			    (field.IsFamily || field.IsFamilyOrAssembly || field.IsPublic) &&
 			    IsVisibleOutside(context, parameters, field))
-				service.SetCanRename(field, false);
+				service.SetCanRename(field, false, "It is visible outside");
 
 			else if (field.IsRuntimeSpecialName)
-				service.SetCanRename(field, false);
+				service.SetCanRename(field, false, "RuntimeSpecialName");
 
 			else if (parameters.GetParameter(context, field, "forceRen", false))
 				return;
 
 			else if (field.DeclaringType.IsSerializable && !field.IsNotSerialized)
-				service.SetCanRename(field, false);
+				service.SetCanRename(field, false, "It is serializable.");
 
 			else if (field.IsLiteral && field.DeclaringType.IsEnum &&
 				!parameters.GetParameter(context, field, "renEnum", false))
-				service.SetCanRename(field, false);
+				service.SetCanRename(field, false, "It is an enum value");
 		}
 
 		void Analyze(NameService service, ConfuserContext context, ProtectionParameters parameters, PropertyDef property) {
 			if (IsVisibleOutside(context, parameters, property.DeclaringType) &&
-			    property.IsPublic() &&
-			    IsVisibleOutside(context, parameters, property))
-				service.SetCanRename(property, false);
+			    IsVisibleOutside(context, parameters, property) &&
+          property.IsPublic())
+				service.SetCanRename(property, false, "It is visible outside.");
 
 			else if (property.IsRuntimeSpecialName)
-				service.SetCanRename(property, false);
+				service.SetCanRename(property, false, "RuntimeSpecialName");
 
 			else if (parameters.GetParameter(context, property, "forceRen", false))
 				return;
 
 			else if (property.DeclaringType.Implements("System.ComponentModel.INotifyPropertyChanged"))
-				service.SetCanRename(property, false);
+				service.SetCanRename(property, false, "Declaring type implements INotifyPropertyChanged");
 
 			else if (property.DeclaringType.Name.String.Contains("AnonymousType"))
-				service.SetCanRename(property, false);
+				service.SetCanRename(property, false, "Declaring type is an anonymous type");
 		}
 
 		void Analyze(NameService service, ConfuserContext context, ProtectionParameters parameters, EventDef evt) {
 			if (IsVisibleOutside(context, parameters, evt.DeclaringType) &&
-			    evt.IsPublic() &&
-			    IsVisibleOutside(context, parameters, evt))
-				service.SetCanRename(evt, false);
+			    IsVisibleOutside(context, parameters, evt) &&
+          evt.IsPublic())
+				service.SetCanRename(evt, false, "It is visible outside");
 
 			else if (evt.IsRuntimeSpecialName)
-				service.SetCanRename(evt, false);
+				service.SetCanRename(evt, false, "RuntimeSpecialName");
 		}
 	}
 }

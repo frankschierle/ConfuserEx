@@ -73,7 +73,7 @@ namespace Confuser.Renamer.Analyzers {
 					}
 					else {
 						foreach (var property in props)
-							service.SetCanRename(property, false);
+							service.SetCanRename(property, false, "Used by WinForms binding");
 					}
 				}
 
@@ -92,7 +92,7 @@ namespace Confuser.Renamer.Analyzers {
 					}
 					else {
 						foreach (var property in props)
-							service.SetCanRename(property, false);
+							service.SetCanRename(property, false, "Used by WinForms binding");
 					}
 				}
 			}

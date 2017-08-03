@@ -186,7 +186,7 @@ namespace Confuser.Protections.ReferenceProxy {
 			delegateType.Methods.Add(method);
 
 			ctx.Context.Registry.GetService<IMarkerService>().Mark(method, ctx.Protection);
-			ctx.Name.SetCanRename(method, false);
+			ctx.Name.SetCanRename(method, false, null);
 
 			return method;
 		}
@@ -205,7 +205,7 @@ namespace Confuser.Protections.ReferenceProxy {
 			delegateType.Fields.Add(field);
 
 			ctx.Marker.Mark(field, ctx.Protection);
-			ctx.Name.SetCanRename(field, false);
+			ctx.Name.SetCanRename(field, false, null);
 
 			return field;
 		}
@@ -269,7 +269,7 @@ namespace Confuser.Protections.ReferenceProxy {
 
 				injectedMethod.Access = MethodAttributes.PrivateScope;
 				injectedMethod.Name = ctx.Name.RandomName();
-				ctx.Name.SetCanRename(injectedMethod, false);
+				ctx.Name.SetCanRename(injectedMethod, false, null);
 				ctx.Marker.Mark(injectedMethod, ctx.Protection);
 
 				var desc = new InitMethodDesc { Method = injectedMethod };
@@ -327,7 +327,7 @@ namespace Confuser.Protections.ReferenceProxy {
 			foreach (TypeDef delegateType in ctx.Delegates.Values) {
 				MethodDef cctor = delegateType.FindOrCreateStaticConstructor();
 				ctx.Marker.Mark(cctor, ctx.Protection);
-				ctx.Name.SetCanRename(cctor, false);
+				ctx.Name.SetCanRename(cctor, false, null);
 			}
 
 			ctx.Context.CurrentModuleWriterOptions.MetaDataOptions.Flags |= MetaDataFlags.PreserveExtraSignatureData;

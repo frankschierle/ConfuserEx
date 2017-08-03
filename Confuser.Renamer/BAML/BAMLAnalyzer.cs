@@ -575,7 +575,7 @@ namespace Confuser.Renamer.BAML {
 					List<PropertyDef> candidates;
 					if (properties.TryGetValue(part.Name, out candidates))
 						foreach (PropertyDef property in candidates) {
-							service.SetCanRename(property, false);
+							service.SetCanRename(property, false, "It is potentially used for XAML bindings");
 						}
 				}
 

@@ -82,7 +82,7 @@ namespace Confuser.Protections.ReferenceProxy {
 
 			foreach (IDnlibDef def in ret.FindDefinitions()) {
 				ctx.Marker.Mark(def, ctx.Protection);
-				ctx.Name.SetCanRename(def, false);
+				ctx.Name.SetCanRename(def, false, null);
 			}
 
 			ctx.Delegates[sig] = ret;

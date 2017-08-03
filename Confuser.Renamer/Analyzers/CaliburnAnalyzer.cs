@@ -18,16 +18,16 @@ namespace Confuser.Renamer.Analyzers {
 				string viewName = type.Name.Replace("PageViewModel", "Page").Replace("ViewModel", "View");
 				TypeDef view = type.Module.Find(viewNs + "." + viewName, true);
 				if (view != null) {
-					service.SetCanRename(type, false);
-					service.SetCanRename(view, false);
+					service.SetCanRename(type, false, "Caliburn view model");
+					service.SetCanRename(view, false, "Caliburn view");
 				}
 
 				// Test for Multi-view
 				string multiViewNs = type.Namespace + "." + type.Name.Replace("ViewModel", "");
 				foreach (var t in type.Module.Types)
 					if (t.Namespace == multiViewNs) {
-						service.SetCanRename(type, false);
-						service.SetCanRename(t, false);
+						service.SetCanRename(type, false, "Caliburn view model");
+						service.SetCanRename(t, false, "Caliburn view");
 					}
 			}
 		}
@@ -79,7 +79,7 @@ namespace Confuser.Renamer.Analyzers {
 
 				string actName = msgStr.Trim();
 				foreach (var method in analyzer.LookupMethod(actName))
-					analyzer.NameService.SetCanRename(method, false);
+					analyzer.NameService.SetCanRename(method, false, "Caliburn message attach");
 			}
 		}
 
@@ -88,9 +88,9 @@ namespace Confuser.Renamer.Analyzers {
 				return;
 
 			foreach (var method in analyzer.LookupMethod(value))
-				analyzer.NameService.SetCanRename(method, false);
+				analyzer.NameService.SetCanRename(method, false, "Caliburn auto bind");
 			foreach (var method in analyzer.LookupProperty(value))
-				analyzer.NameService.SetCanRename(method, false);
+				analyzer.NameService.SetCanRename(method, false, "Caliburn auto bind");
 		}
 
 		void AnalyzeActionMessage(BAMLAnalyzer analyzer, Tuple<IDnlibDef, AttributeInfoRecord, TypeDef> attr, string value) {
@@ -101,7 +101,7 @@ namespace Confuser.Renamer.Analyzers {
 				return;
 
 			foreach (var method in analyzer.LookupMethod(value))
-				analyzer.NameService.SetCanRename(method, false);
+				analyzer.NameService.SetCanRename(method, false, "Caliburn action message");
 		}
 
 

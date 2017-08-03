@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Confuser.Core;
@@ -14,7 +15,7 @@ namespace Confuser.Renamer {
 		void Analyze(IDnlibDef def);
 
 		bool CanRename(object obj);
-		void SetCanRename(object obj, bool val);
+		void SetCanRename(object obj, bool val, string reason);
 
 		void SetParam(IDnlibDef def, string name, string value);
 		string GetParam(IDnlibDef def, string name);
@@ -91,8 +92,16 @@ namespace Confuser.Renamer {
 			return false;
 		}
 
-		public void SetCanRename(object obj, bool val) {
+		public void SetCanRename(object obj, bool val, string reason) {
+		  string message;
+
 			context.Annotations.Set(obj, CanRenameKey, val);
+
+		  if (!val && !string.IsNullOrEmpty(reason))
+		  {
+		    message = string.Format(CultureInfo.InvariantCulture, "{0} cannot be renamed: {1}", obj, reason);
+		    context.Logger.Warn(message);
+		  }
 		}
 
 		public void SetParam(IDnlibDef def, string name, string value) {
@@ -288,7 +297,7 @@ namespace Confuser.Renamer {
 				if (!type.IsSpecialName && !type.IsRuntimeSpecialName)
 					type.Name = RandomName();
 			}
-			SetCanRename(def, false);
+			SetCanRename(def, false, null);
 			Analyze(def);
 			marker.Mark(def, parentComp);
 		}

@@ -86,7 +86,7 @@ namespace Confuser.Protections.Compress {
 			protected override void Execute(ConfuserContext context, ProtectionParameters parameters) {
 				var field = context.CurrentModule.Types[0].FindField("DataField");
 				Debug.Assert(field != null);
-				context.Registry.GetService<INameService>().SetCanRename(field, true);
+				context.Registry.GetService<INameService>().SetCanRename(field, true, "DataField");
 
 				context.CurrentModuleWriterListener.OnWriterEvent += (sender, e) => {
 					if (e.WriterEvent == ModuleWriterEvent.MDBeginCreateTables) {

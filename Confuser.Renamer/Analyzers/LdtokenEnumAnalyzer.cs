@@ -21,19 +21,19 @@ namespace Confuser.Renamer.Analyzers {
 					if (instr.Operand is MemberRef) {
 						IMemberForwarded member = ((MemberRef)instr.Operand).ResolveThrow();
 						if (context.Modules.Contains((ModuleDefMD)member.Module))
-							service.SetCanRename(member, false);
+							service.SetCanRename(member, false, "Accessed via reflection in " + method.FullName);
 					}
 					else if (instr.Operand is IField) {
 						FieldDef field = ((IField)instr.Operand).ResolveThrow();
 						if (context.Modules.Contains((ModuleDefMD)field.Module))
-							service.SetCanRename(field, false);
+							service.SetCanRename(field, false, "Accessed via reflection in " + method.FullName);
 					}
 					else if (instr.Operand is IMethod) {
 						var im = (IMethod)instr.Operand;
 						if (!im.IsArrayAccessors()) {
 							MethodDef m = im.ResolveThrow();
 							if (context.Modules.Contains((ModuleDefMD)m.Module))
-								service.SetCanRename(method, false);
+								service.SetCanRename(method, false, "Accessed via reflection in " + method.FullName);
 						}
 					}
 					else if (instr.Operand is ITypeDefOrRef) {
@@ -43,7 +43,7 @@ namespace Confuser.Renamer.Analyzers {
 							    HandleTypeOf(context, service, method, i)) {
 								var t = type;
 								do {
-									DisableRename(service, t, false);
+									DisableRename(service, t, "Accessed via typeof() in " + method.FullName, false);
 									t = t.DeclaringType;
 								} while (t != null);
 							}
@@ -114,7 +114,7 @@ namespace Confuser.Renamer.Analyzers {
 
 				TypeDef targetTypeDef = targetTypeRef.ResolveTypeDefThrow();
 				if (targetTypeDef != null && targetTypeDef.IsEnum && context.Modules.Contains((ModuleDefMD)targetTypeDef.Module))
-					DisableRename(service, targetTypeDef);
+					DisableRename(service, targetTypeDef, "ToString() is called");
 			}
 		}
 
@@ -164,23 +164,23 @@ namespace Confuser.Renamer.Analyzers {
 			return false;
 		}
 
-		void DisableRename(INameService service, TypeDef typeDef, bool memberOnly = true) {
-			service.SetCanRename(typeDef, false);
+		void DisableRename(INameService service, TypeDef typeDef, string reason, bool memberOnly = true) {
+			service.SetCanRename(typeDef, false, reason);
 
 			foreach (MethodDef m in typeDef.Methods)
-				service.SetCanRename(m, false);
+				service.SetCanRename(m, false, reason);
 
 			foreach (FieldDef field in typeDef.Fields)
-				service.SetCanRename(field, false);
+				service.SetCanRename(field, false, reason);
 
 			foreach (PropertyDef prop in typeDef.Properties)
-				service.SetCanRename(prop, false);
+				service.SetCanRename(prop, false, reason);
 
 			foreach (EventDef evt in typeDef.Events)
-				service.SetCanRename(evt, false);
+				service.SetCanRename(evt, false, reason);
 
 			foreach (TypeDef nested in typeDef.NestedTypes)
-				DisableRename(service, nested, false);
+				DisableRename(service, nested, reason, false);
 		}
 	}
 }

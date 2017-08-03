@@ -41,7 +41,7 @@ namespace Confuser.Protections.ReferenceProxy {
 			ctx.Module.GlobalType.Methods.Add(native);
 
 			ctx.Context.Registry.GetService<IMarkerService>().Mark(native, ctx.Protection);
-			ctx.Context.Registry.GetService<INameService>().SetCanRename(native, false);
+			ctx.Context.Registry.GetService<INameService>().SetCanRename(native, false, null);
 
 			x86Register? reg;
 			var codeGen = new x86CodeGen();

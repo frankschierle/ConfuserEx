@@ -91,7 +91,7 @@ namespace Confuser.Renamer.Analyzers {
 				}
 			}
 			if (!hasId)
-				service.SetCanRename(type, false);
+				service.SetCanRename(type, false, "No Id found (JSON analyzer)");
 		}
 
 		void Analyze(ConfuserContext context, INameService service, MethodDef method, ProtectionParameters parameters) {
@@ -102,13 +102,13 @@ namespace Confuser.Renamer.Analyzers {
 
 		void Analyze(ConfuserContext context, INameService service, PropertyDef property, ProtectionParameters parameters) {
 			if (ShouldExclude(property.DeclaringType, property)) {
-				service.SetCanRename(property, false);
+				service.SetCanRename(property, false, "Type should be JSON serializable");
 			}
 		}
 
 		void Analyze(ConfuserContext context, INameService service, FieldDef field, ProtectionParameters parameters) {
 			if (ShouldExclude(field.DeclaringType, field)) {
-				service.SetCanRename(field, false);
+				service.SetCanRename(field, false, "Type should be JSON serializable");
 			}
 		}
 

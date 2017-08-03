@@ -81,7 +81,7 @@ namespace Confuser.Protections {
 								marker.Mark(member, (Protection)Parent);
 								name.Analyze(member);
 							}
-							name.SetCanRename(attr, false);
+							name.SetCanRename(attr, false, "Attribute injected by ConfuserEx");
 							break;
 						default:
 							throw new UnreachableException();
@@ -122,7 +122,7 @@ namespace Confuser.Protections {
 						}
 						if (ren) {
 							member.Name = name.ObfuscateName(member.Name, RenameMode.Unicode);
-							name.SetCanRename(member, false);
+							name.SetCanRename(member, false, null);
 						}
 					}
 				}

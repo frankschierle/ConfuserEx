@@ -42,7 +42,7 @@ namespace Confuser.Renamer {
 
 			marker.Mark(newType, null);
 			marker.Mark(trap, null);
-			nameService.SetCanRename(trap, false);
+			nameService.SetCanRename(trap, false, null);
 
 			foreach (var method in module.GetTypes().SelectMany(type => type.Methods)) {
 				if (method != trap && method.HasBody)

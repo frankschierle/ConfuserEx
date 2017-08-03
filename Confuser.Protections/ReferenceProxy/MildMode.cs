@@ -39,7 +39,7 @@ namespace Confuser.Protections.ReferenceProxy {
 
 				ctx.Marker.Mark(proxy, ctx.Protection);
 				ctx.Name.Analyze(proxy);
-				ctx.Name.SetCanRename(proxy, false);
+				ctx.Name.SetCanRename(proxy, false, null);
 
 				proxy.Body = new CilBody();
 				for (int i = 0; i < proxy.Parameters.Count; i++)
