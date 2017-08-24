@@ -27,10 +27,10 @@ namespace Confuser.Renamer.Analyzers {
 						bool baseUnderCtrl = context.Modules.Contains(slot.MethodDef.DeclaringType.Module as ModuleDefMD);
 						bool ifaceUnderCtrl = context.Modules.Contains(slot.Overrides.MethodDef.DeclaringType.Module as ModuleDefMD);
 						if ((!baseUnderCtrl && ifaceUnderCtrl) || !service.CanRename(slot.MethodDef)) {
-							service.SetCanRename(slot.Overrides.MethodDef, false, "Base class method");
+							service.SetCanRename(slot.Overrides.MethodDef, false, "Base type method (caused by " + slot.MethodDef.FullName + ")");
 						}
 						else if (baseUnderCtrl && !ifaceUnderCtrl || !service.CanRename(slot.Overrides.MethodDef)) {
-							service.SetCanRename(slot.MethodDef, false, "Interface method");
+							service.SetCanRename(slot.MethodDef, false, "Interface method (caused by " + slot.MethodDef.FullName + ")");
 						}
 					}
 				}
@@ -51,14 +51,6 @@ namespace Confuser.Renamer.Analyzers {
 						// Better on safe side, add references to both methods.
 						service.AddReference(method, new OverrideDirectiveReference(slot, slot.Overrides));
 						service.AddReference(slot.Overrides.MethodDef, new OverrideDirectiveReference(slot, slot.Overrides));
-					}
-				}
-				else {
-					foreach (var slot in slots) {
-						if (slot.Overrides == null)
-							continue;
-						service.SetCanRename(method, false, "Abstract method");
-						service.SetCanRename(slot.Overrides.MethodDef, false, "Abstract method override");
 					}
 				}
 			}
