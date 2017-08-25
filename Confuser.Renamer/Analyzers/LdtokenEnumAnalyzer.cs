@@ -44,8 +44,11 @@ namespace Confuser.Renamer.Analyzers {
 							    HandleTypeOf(context, service, method, i)) {
 								var t = type;
 								do {
-									DisableRename(context, service, parameters, t, "Accessed via typeof() in " + method.FullName, false);
-									t = t.DeclaringType;
+								  if (!parameters.GetParameter(context, t, "forceRen", false))
+								  {
+								    DisableRename(context, service, parameters, t, "Accessed via typeof() in " + method.FullName, false);
+								  }
+								  t = t.DeclaringType;
 								} while (t != null);
 							}
 						}
